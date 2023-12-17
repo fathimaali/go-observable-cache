@@ -24,11 +24,10 @@ type LocalCache struct {
 }
 
 func (c *LocalCache) Get(key string) (string, bool) {
-	found := false
 	if !c.store[key].expiry.After(time.Now()) {
 		return "", false
 	}
-	return c.store[key].data, found
+	return c.store[key].data, true
 }
 
 func (c *LocalCache) Set(key string, val string) {

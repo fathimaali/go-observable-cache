@@ -22,14 +22,16 @@ func TestNewTTLSpecified(t *testing.T) {
 func TestSet(t *testing.T) {
 	a := New(10)
 	a.Set("key", "value")
-	if a.Get("key") != "value" || a.ttl != 10 {
+	key, _ := a.Get("key")
+	if key != "value" || a.ttl != 10 {
 		t.Errorf("Function Set is not working.")
 	}
 }
 func TestGet(t *testing.T) {
 	a := New(10)
 	a.Set("key", "value")
-	if a.Get("key") != "value" || a.ttl != 10 {
+	key, _ := a.Get("key")
+	if key != "value" || a.ttl != 10 {
 		t.Errorf("Function Get is returning nil")
 	}
 }
@@ -42,4 +44,3 @@ func TestPurge(t *testing.T) {
 		t.Errorf("Function Purge is not purging")
 	}
 }
-
