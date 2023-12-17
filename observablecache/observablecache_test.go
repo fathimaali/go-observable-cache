@@ -3,6 +3,7 @@ package observablecache
 import (
 	"testing"
 	"time"
+	"strconv"
 )
 
 func TestNewTTLNotSpecified(t *testing.T) {
@@ -25,6 +26,24 @@ func TestSet(t *testing.T) {
 	key, _ := a.Get("key")
 	if key != "value" || a.ttl != 10 {
 		t.Errorf("Function Set is not working.")
+	}
+}
+
+func TestIncrementingValues(t *testing.T) {
+	cache := New()
+	cache.Set("key", "0")
+	value, err := cache.Get("key")
+	if err != nil {
+		t.Errorf("Couldn't fetch value from cache")
+	}
+	i, err := strconv.Atoi(value)
+	if err != nil {
+		t.Errorf("Couldn't convert %s to integer", value)
+	}
+	value = strconv.Itoa(i+1)
+	cache.Set("key", value)
+	if a.Get("key") != "1" {
+		t.Errorf("Function Set is not concurrent safe.")
 	}
 }
 func TestGet(t *testing.T) {
