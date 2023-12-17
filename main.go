@@ -50,17 +50,11 @@ func main() {
 		}
 		fmt.Println("Enter the Employee ID that you want to search the details for, we'll see if it's cached: ")
 		fmt.Scanln(&inputEmployeeID)
-		var found string
-		// for {
-		found = newlocalCache.Get(inputEmployeeID)
-		// 	if found != "" {
-		// 		break
-		// 	}
-		// 	fmt.Println("Hmm, no results found in the file for that employeeID, do you want to retry? Enter Employee ID: ")
-		// 	fmt.Scanln(&inputEmployeeID)
-		// }
-		// //fmt.Println("Employee details found! Employee ID : " + inputEmployeeID + " " + fmt.Sprintf("%+v", myMap[inputEmployeeID]))
-		fmt.Println("Employee details found! Employee ID : " + inputEmployeeID + " " + found + "!")
-		// fmt.Println(myMap[inputEmployeeID])
+		found, _ := newlocalCache.Get(inputEmployeeID)
+		if found != "" {
+			fmt.Println("Employee details found! Employee ID : " + inputEmployeeID + " " + found + "!")
+		} else {
+			fmt.Println("Hmm, looks like we don't have results for it.")
+		}
 	}
 }

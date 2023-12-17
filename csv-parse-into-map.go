@@ -27,7 +27,6 @@ func csvParseIntoMap(fileName string) (map[EmployeeID]EmployeeDetails, observabl
 
 	myMap := map[EmployeeID]EmployeeDetails{}
 	localC := observablecache.New()
-	localC.Init()
 	for _, eachrecord := range records {
 		if len(eachrecord) != 4 {
 			continue
