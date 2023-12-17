@@ -50,11 +50,11 @@ func main() {
 		}
 		fmt.Println("Enter the Employee ID that you want to search the details for, we'll see if it's cached: ")
 		fmt.Scanln(&inputEmployeeID)
-		found, _ := newlocalCache.Get(inputEmployeeID)
-		if found != "" {
-			fmt.Println("Employee details found! Employee ID : " + inputEmployeeID + " " + found + "!")
-		} else {
+		found, err := newlocalCache.Get(inputEmployeeID)
+		if err == false {
 			fmt.Println("Hmm, looks like we don't have results for it.")
+		} else {
+			fmt.Println("Employee details found! Employee ID : " + inputEmployeeID + " " + found + "!")
 		}
 	}
 }
