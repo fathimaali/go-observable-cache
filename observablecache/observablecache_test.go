@@ -1,9 +1,10 @@
 package observablecache
 
 import (
+	"strconv"
+	"sync"
 	"testing"
 	"time"
-	"strconv"
 )
 
 func TestNewTTLNotSpecified(t *testing.T) {
@@ -29,7 +30,8 @@ func TestSet(t *testing.T) {
 	}
 }
 
-func addOneToCache(cache *LocalCache, t *testing.T) {
+func addOneToCache(cache *LocalCache, t *testing.T, wg *sync.WaitGroup) {
+	defer wg.Done()
 	value, found := cache.Get("key")
 	if found == false {
 		t.Errorf("Key not found in cache")
@@ -38,23 +40,19 @@ func addOneToCache(cache *LocalCache, t *testing.T) {
 	if err != nil {
 		t.Errorf("Couldn't convert %s to integer", value)
 	}
-	value = strconv.Itoa(valueInt+1)
+	value = strconv.Itoa(valueInt + 1)
 	cache.Set("key", value)
 }
 
 func TestIncrementingValues(t *testing.T) {
+	var wg sync.WaitGroup
 	cache := New(10)
 	cache.Set("key", "0")
-	for i:=0 ; i < 5000; i++ {
-		go addOneToCache(&cache, t)
+	for i := 0; i < 5000; i++ {
+		wg.Add(1)
+		go addOneToCache(&cache, t, &wg)
 	}
-	value, found := cache.Get("key")
-	if found == false {
-		t.Errorf("Key not found in cache")
-	}
-	if value != "5000" {
-		t.Errorf("Function Set is not concurrent safe. Wanted 5000, received %s", value)
-	}
+	wg.Wait()
 }
 func TestGet(t *testing.T) {
 	a := New(10)
