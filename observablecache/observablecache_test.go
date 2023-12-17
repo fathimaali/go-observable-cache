@@ -29,21 +29,31 @@ func TestSet(t *testing.T) {
 	}
 }
 
-func TestIncrementingValues(t *testing.T) {
-	cache := New()
-	cache.Set("key", "0")
-	value, err := cache.Get("key")
-	if err != nil {
-		t.Errorf("Couldn't fetch value from cache")
+func addOneToCache(cache *LocalCache, t *testing.T) {
+	value, found := cache.Get("key")
+	if found == false {
+		t.Errorf("Key not found in cache")
 	}
-	i, err := strconv.Atoi(value)
+	valueInt, err := strconv.Atoi(value)
 	if err != nil {
 		t.Errorf("Couldn't convert %s to integer", value)
 	}
-	value = strconv.Itoa(i+1)
+	value = strconv.Itoa(valueInt+1)
 	cache.Set("key", value)
-	if a.Get("key") != "1" {
-		t.Errorf("Function Set is not concurrent safe.")
+}
+
+func TestIncrementingValues(t *testing.T) {
+	cache := New(10)
+	cache.Set("key", "0")
+	for i:=0 ; i < 5000; i++ {
+		go addOneToCache(&cache, t)
+	}
+	value, found := cache.Get("key")
+	if found == false {
+		t.Errorf("Key not found in cache")
+	}
+	if value != "5000" {
+		t.Errorf("Function Set is not concurrent safe. Wanted 5000, received %s", value)
 	}
 }
 func TestGet(t *testing.T) {
